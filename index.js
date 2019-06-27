@@ -12,18 +12,28 @@ var inquirer = require("inquirer")
 var apiKey = "ab2901a"
 var url = `http://www.omdbapi.com/?apikey=${apiKey}&`
 
-function searchBandsInTown(){
+const searchBandsInTown = () => {
     inquirer.prompt([{
         type: "input",
         message: "search by bandsInTown",
         name: "bandsInTown"
-    }]).then(inquirerResponse => {
+    }]).then(async inquirerResponse => {
         console.log(inquirerResponse.bandsInTown)
         let queryURL = "https://rest.bandsintown.com/artists/" + inquirerResponse.bandsInTown + "?app_id=codingbootcamp"
+        let qURL = "https://rest.bandsintown.com/artists/" + inquirerResponse.bandsInTown + "/events?app_id=codingbootcamp" 
         // console.log(queryURL)
-        axios.get(queryURL).then(res => {
-            console.log(res)
-        })
+        try {
+           let response = await axios.get(queryURL);
+           let responseInfo = await axios.get(qURL);
+
+           let formattedDate = moment(responseInfo.data[0].datetime).format("dddd MMMM Do YYYY h:mm a")
+           console.log("Artist: " + response.data.name)
+           console.log("Venue: " + responseInfo.data[0].venue.name)
+           console.log("Time:" + formattedDate)
+        } catch (e){
+            return console.log(e);
+        }
+        
     })
 }
 
@@ -51,7 +61,7 @@ function searchOmdb(){
 function searchSpotify(){
     inquirer.prompt([{
         type: "input",
-        message: "search artist",
+        message: "search song",
         name: "spotifySearch"
     }]).then(inquirerResponse => {
         console.log(inquirerResponse.spotifySearch)
@@ -61,7 +71,7 @@ function searchSpotify(){
         }, 
         function(err, data) {
             if (err) throw err
-            console.log("Artist: " + data.tracks.items[0].artists[0].name);
+            console.log("\x1b[35m","Artist: " + data.tracks.items[0].artists[0].name);
             console.log("Song: " + data.tracks.items[0].name);
             console.log("Preview Link: " + data.tracks.items[0].preview_url);
             console.log("Album: " + data.tracks.items[0].album.name);
