@@ -14,7 +14,7 @@ var url = `http://www.omdbapi.com/?apikey=${apiKey}&`
 
 function searchBandsInTown(){
     inquirer.prompt([{
-        type: "imput",
+        type: "input",
         message: "search by bandsInTown",
         name: "bandsInTown"
     }]).then(inquirerResponse => {
@@ -22,7 +22,7 @@ function searchBandsInTown(){
         let queryURL = "https://rest.bandsintown.com/artists/" + inquirerResponse.bandsInTown + "?app_id=codingbootcamp"
         // console.log(queryURL)
         axios.get(queryURL).then(res => {
-            console.log(res.data)
+            console.log(res)
         })
     })
 }
@@ -37,7 +37,13 @@ function searchOmdb(){
         let queryURL = `${url}t=${inquirerResponse.omdbSearch}`
         // console.log(queryURL)
         axios.get(queryURL).then(res => {
-            console.log(res)
+            console.log("\x1b[34m","Title: " + res.data.Title)
+            console.log("Release Year: " + res.data.Year)
+            console.log("IMDB Rating: " + res.data.imdbRating)
+            console.log("Country: " + res.data.Country)
+            console.log("Language: " + res.data.Language)
+            console.log("Plot: " + res.data.Plot)
+            console.log("Actors: " + res.data.Actors)
         })
     })
 }
@@ -55,10 +61,10 @@ function searchSpotify(){
         }, 
         function(err, data) {
             if (err) throw err
-            let tracks = data.tracks.items
-            for (let i= 0; i < tracks.length; i++){
-                console.log(tracks[i].name)
-            }
+            console.log("Artist: " + data.tracks.items[0].artists[0].name);
+            console.log("Song: " + data.tracks.items[0].name);
+            console.log("Preview Link: " + data.tracks.items[0].preview_url);
+            console.log("Album: " + data.tracks.items[0].album.name);
         }
         )
     })
@@ -70,7 +76,7 @@ inquirer.prompt([{
     choices: ["search spotify", "search bands in town", "search omdb", "quit app"],
     name: "options"
 }]).then(inquireResponse => {
-    // turnery expression... if/else that relies on true/false
+    // ternery expression... if/else that relies on true/false
     inquireResponse.options === "quit app"
     ? process.exit()
     : inquireResponse.options === "search spotify"
